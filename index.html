@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Google Sheet</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- PapaParse untuk parsing CSV -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+</head>
+<body>
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">Status Media Sosial</h2>
+    <div class="table-responsive">
+      <table class="table table-bordered text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Judul</th>
+            <th><i class="fab fa-tiktok fa-2x"></i></th>
+            <th><i class="fab fa-youtube fa-2x"></i></th>
+          </tr>
+        </thead>
+        <tbody id="data-body">
+          <!-- Data akan dimuat melalui JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // URL CSV dari Google Sheets
+      const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRP-UjL7R-03VznIVFMrOtn_D_NOf0EgHYsfVlqcyTsiSj6TJ-xr9bQWI7UylvVaARyeNNl4AFB-O3L/pub?output=csv";
+
+      // Mengambil data CSV
+      fetch(sheetUrl)
+        .then(response => response.text())
+        .then(csvText => {
+          Papa.parse(csvText, {
+            header: true,
+            skipEmptyLines: true,
+            complete: function (results) {
+              let dataBody = document.getElementById("data-body");
+              let rowIndex = 0;
+              results.data.forEach(row => {
+                rowIndex++;
+                let newRow = `
+                  <tr>
+                    <td>${rowIndex}</td>
+                    <td>${row.Judul}</td>
+                    <td>${formatStatus(row.Tiktok)}</td>
+                    <td>${formatStatus(row.Youtube)}</td>
+                  </tr>
+                `;
+                dataBody.innerHTML += newRow;
+              });
+            }
+          });
+        });
+
+      // Fungsi untuk memberikan badge warna berdasarkan status
+      function formatStatus(status) {
+        if (!status) return "-";
+        let badgeClass = "bg-secondary";
+        if (status.toLowerCase() === "ya")      badgeClass = "bg-success";
+        if (status.toLowerCase() === "blokir")  badgeClass = "bg-danger";
+        if (status.toLowerCase() === "ongoing") badgeClass = "bg-warning text-dark";
+        if (status.toLowerCase() === "belum")   badgeClass = "bg-info text-dark";
+
+        return `<span class="badge ${badgeClass}">${status}</span>`;
+      }
+    });
+  </script>
+</body>
+</html>

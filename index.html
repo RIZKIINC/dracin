@@ -1,46 +1,75 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-bs-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Data Google Sheet</title>
-  <!-- Favicon menggunakan SVG (ikon play) -->
+  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23FF0000'/%3E%3Cpolygon points='26,20 26,44 46,32' fill='%23FFFFFF'/%3E%3C/svg%3E">
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome CSS -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- PapaParse untuk parsing CSV -->
+  <!-- PapaParse -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  
+
   <style>
+    body {
+      background: #1a1a1a;
+      color: #e9ecef;
+    }
+    .table-custom {
+      --bs-table-bg: #2d2d2d;
+      --bs-table-border-color: #404040;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .table-custom th {
+      background: linear-gradient(45deg, #2b3035, #212529);
+      font-size: 1.1em;
+      padding: 1rem;
+    }
     .table-hover tbody tr:hover {
-      background-color: rgba(0, 0, 0, 0.05);
+      background-color: rgba(255, 255, 255, 0.05);
+      transition: background-color 0.2s;
     }
     .img-thumbnail {
-      transition: transform 0.2s;
+      transition: all 0.3s ease;
+      border: 2px solid #404040;
     }
     .img-thumbnail:hover {
-      transform: scale(1.1);
-      cursor: pointer;
+      transform: scale(1.05);
+      border-color: #6c757d;
+    }
+    .status-badge {
+      font-size: 0.9em;
+      padding: 0.6em 1em;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .table-title {
+      font-weight: 600;
+      color: #f8f9fa;
     }
   </style>
 </head>
 <body>
-  <div class="container mt-5">
-    <h2 class="text-center mb-4">Status Media Sosial</h2>
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover text-center align-middle">
-        <thead class="table-dark">
+  <div class="container py-5">
+    <h2 class="text-center mb-4 text-gradient">📊 Status Media Sosial</h2>
+    <div class="table-responsive shadow-lg">
+      <table class="table table-custom table-hover align-middle">
+        <thead>
           <tr>
-            <th>#</th>
-            <th>Gambar</th>
-            <th>Judul</th>
-            <th><i class="fab fa-tiktok fa-2x"></i></th>
-            <th><i class="fab fa-youtube fa-2x"></i></th>
+            <th class="text-center">#</th>
+            <th class="text-center">🎨 Gambar</th>
+            <th class="text-center">📝 Judul</th>
+            <th class="text-center"><i class="fab fa-tiktok me-2"></i>TikTok</th>
+            <th class="text-center"><i class="fab fa-youtube me-2"></i>YouTube</th>
           </tr>
         </thead>
-        <tbody id="data-body">
+        <tbody id="data-body" class="table-group-divider">
           <!-- Data akan dimuat melalui JavaScript -->
         </tbody>
       </table>
@@ -58,25 +87,23 @@
             header: true,
             skipEmptyLines: true,
             complete: function (results) {
-              let dataBody = document.getElementById("data-body");
-              let rowIndex = 0;
-              results.data.forEach(row => {
-                rowIndex++;
-                // Encode judul untuk nama file gambar (mengganti spasi dengan %20)
-                const imageName = encodeURIComponent(row.Judul);
-                let newRow = `
+              const dataBody = document.getElementById("data-body");
+              dataBody.innerHTML = ""; // Kosongkan tabel sebelum diisi
+              
+              results.data.forEach((row, index) => {
+                const newRow = `
                   <tr>
-                    <td>${rowIndex}</td>
-                    <td>
-                      <img src="img/${imageName}.jpg" 
-                           class="img-thumbnail rounded" 
-                           style="width: 100px; height: 133.33px; object-fit: cover;"
+                    <td class="text-center fw-semibold">${index + 1}</td>
+                    <td class="text-center">
+                      <img src="${row.Gambar}" 
+                           class="img-thumbnail rounded-3" 
+                           style="width: 120px; height: 160px; object-fit: cover;"
                            alt="${row.Judul}"
-                           onerror="this.onerror=null;this.src='https://via.placeholder.com/100?text=Gambar+Tidak+Ada'">
+                           onerror="this.onerror=null;this.src='https://placehold.co/120x160/2d2d2d/FFF?text=Gambar+Tidak+Ada'">
                     </td>
-                    <td class="fw-bold">${row.Judul}</td>
-                    <td>${formatStatus(row.Tiktok)}</td>
-                    <td>${formatStatus(row.Youtube)}</td>
+                    <td class="table-title">${row.Judul}</td>
+                    <td class="text-center">${formatStatus(row.Tiktok)}</td>
+                    <td class="text-center">${formatStatus(row.Youtube)}</td>
                   </tr>
                 `;
                 dataBody.innerHTML += newRow;
@@ -86,17 +113,38 @@
         });
 
       function formatStatus(status) {
-        if (!status) return "-";
-        status = status.toLowerCase();
-        const statusClasses = {
-          'ya': 'bg-success',
-          'blokir': 'bg-danger',
-          'ongoing': 'bg-warning text-dark',
-          'belum': 'bg-info text-dark'
-        };
-        const badgeClass = statusClasses[status] || 'bg-secondary';
+        if (!status) return '-';
         
-        return `<span class="badge ${badgeClass} p-2">${status}</span>`;
+        const statusConfig = {
+          'Ya': { 
+            class: 'success', 
+            icon: 'fa-circle-check' 
+          },
+          'Blokir': { 
+            class: 'danger', 
+            icon: 'fa-ban' 
+          },
+          'Ongoing': { 
+            class: 'warning', 
+            icon: 'fa-spinner' 
+          },
+          'Belum': { 
+            class: 'info', 
+            icon: 'fa-clock' 
+          }
+        };
+
+        const config = statusConfig[status] || { 
+          class: 'secondary', 
+          icon: 'fa-circle-question' 
+        };
+
+        return `
+          <span class="status-badge bg-${config.class} text-white">
+            <i class="fas ${config.icon}"></i>
+            ${status}
+          </span>
+        `;
       }
     });
   </script>

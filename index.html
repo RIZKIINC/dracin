@@ -59,12 +59,42 @@
       padding: 1rem;
       margin-bottom: 1.5rem;
     }
+    .social-button {
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+    }
+    .social-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
   </style>
 </head>
 <body>
   <div class="container py-5">
     <h2 class="text-center mb-4 text-gradient">RIZIL CINEMA</h2>
     
+    <!-- Tombol Sosial Media -->
+    <div class="d-flex justify-content-center gap-3 mb-4">
+      <a href="https://www.tiktok.com/@rizil_cinema" 
+         target="_blank" 
+         class="btn btn-dark social-button">
+        <i class="fab fa-tiktok"></i> TikTok
+      </a>
+      <a href="https://www.youtube.com/@rizil_cinema" 
+         target="_blank" 
+         class="btn btn-danger social-button">
+        <i class="fab fa-youtube"></i> YouTube
+      </a>
+      <a href="https://www.facebook.com/rizilcinema" 
+         target="_blank" 
+         class="btn btn-primary social-button">
+        <i class="fab fa-facebook"></i> Facebook
+      </a>
+    </div>
+
     <!-- Filter Section -->
     <div class="filter-container shadow-lg">
       <div class="row g-3">

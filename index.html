@@ -53,11 +53,48 @@
       font-weight: 600;
       color: #f8f9fa;
     }
+    .filter-container {
+      background: #2d2d2d;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
   </style>
 </head>
 <body>
   <div class="container py-5">
     <h2 class="text-center mb-4 text-gradient">📊 Status Media Sosial</h2>
+    
+    <!-- Filter Section -->
+    <div class="filter-container shadow-lg">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-search"></i></span>
+            <input type="text" id="searchInput" class="form-control" placeholder="Cari judul...">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select id="filterTiktok" class="form-select">
+            <option value="">Semua TikTok</option>
+            <option value="Ya">Ya</option>
+            <option value="Belum">Belum</option>
+            <option value="Ongoing">Ongoing</option>
+            <option value="Blokir">Blokir</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select id="filterYoutube" class="form-select">
+            <option value="">Semua YouTube</option>
+            <option value="Ya">Ya</option>
+            <option value="Belum">Belum</option>
+            <option value="Ongoing">Ongoing</option>
+            <option value="Blokir">Blokir</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <div class="table-responsive shadow-lg">
       <table class="table table-custom table-hover align-middle">
         <thead>
@@ -79,65 +116,84 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRP-UjL7R-03VznIVFMrOtn_D_NOf0EgHYsfVlqcyTsiSj6TJ-xr9bQWI7UylvVaARyeNNl4AFB-O3L/pub?output=csv";
+      let allData = [];
 
-      fetch(sheetUrl)
-        .then(response => response.text())
-        .then(csvText => {
-          Papa.parse(csvText, {
-            header: true,
-            skipEmptyLines: true,
-            complete: function (results) {
-              const dataBody = document.getElementById("data-body");
-              dataBody.innerHTML = ""; // Kosongkan tabel sebelum diisi
-              
-              results.data.forEach((row, index) => {
-                const newRow = `
-                  <tr>
-                    <td class="text-center fw-semibold">${index + 1}</td>
-                    <td class="text-center">
-                      <img src="${row.Gambar}" 
-                           class="img-thumbnail rounded-3" 
-                           style="width: 120px; height: 160px; object-fit: cover;"
-                           alt="${row.Judul}"
-                           onerror="this.onerror=null;this.src='https://placehold.co/120x160/2d2d2d/FFF?text=Gambar+Tidak+Ada'">
-                    </td>
-                    <td class="table-title">${row.Judul}</td>
-                    <td class="text-center">${formatStatus(row.Tiktok)}</td>
-                    <td class="text-center">${formatStatus(row.Youtube)}</td>
-                  </tr>
-                `;
-                dataBody.innerHTML += newRow;
-              });
-            }
+      // Elements
+      const searchInput = document.getElementById('searchInput');
+      const filterTiktok = document.getElementById('filterTiktok');
+      const filterYoutube = document.getElementById('filterYoutube');
+
+      // Event Listeners
+      searchInput.addEventListener('input', updateTable);
+      filterTiktok.addEventListener('change', updateTable);
+      filterYoutube.addEventListener('change', updateTable);
+
+      function loadData() {
+        fetch(sheetUrl)
+          .then(response => response.text())
+          .then(csvText => {
+            Papa.parse(csvText, {
+              header: true,
+              skipEmptyLines: true,
+              complete: function (results) {
+                allData = results.data;
+                updateTable();
+              }
+            });
           });
+      }
+
+      function updateTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const tiktokFilter = filterTiktok.value;
+        const youtubeFilter = filterYoutube.value;
+
+        const filteredData = allData.filter(row => {
+          const matchesSearch = row.Judul.toLowerCase().includes(searchTerm);
+          const matchesTiktok = !tiktokFilter || row.Tiktok === tiktokFilter;
+          const matchesYoutube = !youtubeFilter || row.Youtube === youtubeFilter;
+          
+          return matchesSearch && matchesTiktok && matchesYoutube;
         });
+
+        renderTable(filteredData);
+      }
+
+      function renderTable(data) {
+        const dataBody = document.getElementById("data-body");
+        dataBody.innerHTML = "";
+
+        data.forEach((row, index) => {
+          const newRow = `
+            <tr>
+              <td class="text-center fw-semibold">${index + 1}</td>
+              <td class="text-center">
+                <img src="${row.Gambar}" 
+                     class="img-thumbnail rounded-3" 
+                     style="width: 120px; height: 160px; object-fit: cover;"
+                     alt="${row.Judul}"
+                     onerror="this.onerror=null;this.src='https://placehold.co/120x160/2d2d2d/FFF?text=Gambar+Tidak+Ada'">
+              </td>
+              <td class="table-title">${row.Judul}</td>
+              <td class="text-center">${formatStatus(row.Tiktok)}</td>
+              <td class="text-center">${formatStatus(row.Youtube)}</td>
+            </tr>
+          `;
+          dataBody.innerHTML += newRow;
+        });
+      }
 
       function formatStatus(status) {
         if (!status) return '-';
         
         const statusConfig = {
-          'Ya': { 
-            class: 'success', 
-            icon: 'fa-circle-check' 
-          },
-          'Blokir': { 
-            class: 'danger', 
-            icon: 'fa-ban' 
-          },
-          'Ongoing': { 
-            class: 'warning', 
-            icon: 'fa-spinner' 
-          },
-          'Belum': { 
-            class: 'info', 
-            icon: 'fa-clock' 
-          }
+          'Ya': { class: 'success', icon: 'fa-circle-check' },
+          'Blokir': { class: 'danger', icon: 'fa-ban' },
+          'Ongoing': { class: 'warning', icon: 'fa-spinner' },
+          'Belum': { class: 'info', icon: 'fa-clock' }
         };
 
-        const config = statusConfig[status] || { 
-          class: 'secondary', 
-          icon: 'fa-circle-question' 
-        };
+        const config = statusConfig[status] || { class: 'secondary', icon: 'fa-circle-question' };
 
         return `
           <span class="status-badge bg-${config.class} text-white">
@@ -146,6 +202,9 @@
           </span>
         `;
       }
+
+      // Initial load
+      loadData();
     });
   </script>
 </body>

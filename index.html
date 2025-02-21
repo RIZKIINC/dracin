@@ -12,15 +12,29 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- PapaParse untuk parsing CSV -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  
+  <style>
+    .table-hover tbody tr:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    .img-thumbnail {
+      transition: transform 0.2s;
+    }
+    .img-thumbnail:hover {
+      transform: scale(1.1);
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <div class="container mt-5">
     <h2 class="text-center mb-4">Status Media Sosial</h2>
     <div class="table-responsive">
-      <table class="table table-bordered text-center">
+      <table class="table table-bordered table-hover text-center align-middle">
         <thead class="table-dark">
           <tr>
             <th>#</th>
+            <th>Gambar</th>
             <th>Judul</th>
             <th><i class="fab fa-tiktok fa-2x"></i></th>
             <th><i class="fab fa-youtube fa-2x"></i></th>
@@ -35,10 +49,8 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      // URL CSV dari Google Sheets
       const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRP-UjL7R-03VznIVFMrOtn_D_NOf0EgHYsfVlqcyTsiSj6TJ-xr9bQWI7UylvVaARyeNNl4AFB-O3L/pub?output=csv";
 
-      // Mengambil data CSV
       fetch(sheetUrl)
         .then(response => response.text())
         .then(csvText => {
@@ -50,10 +62,19 @@
               let rowIndex = 0;
               results.data.forEach(row => {
                 rowIndex++;
+                // Encode judul untuk nama file gambar (mengganti spasi dengan %20)
+                const imageName = encodeURIComponent(row.Judul);
                 let newRow = `
                   <tr>
                     <td>${rowIndex}</td>
-                    <td>${row.Judul}</td>
+                    <td>
+                      <img src="img/${imageName}.jpg" 
+                           class="img-thumbnail rounded" 
+                           style="width: 100px; height: 133.33px; object-fit: cover;"
+                           alt="${row.Judul}"
+                           onerror="this.onerror=null;this.src='https://via.placeholder.com/100?text=Gambar+Tidak+Ada'">
+                    </td>
+                    <td class="fw-bold">${row.Judul}</td>
                     <td>${formatStatus(row.Tiktok)}</td>
                     <td>${formatStatus(row.Youtube)}</td>
                   </tr>
@@ -64,16 +85,18 @@
           });
         });
 
-      // Fungsi untuk memberikan badge warna berdasarkan status
       function formatStatus(status) {
         if (!status) return "-";
-        let badgeClass = "bg-secondary";
-        if (status.toLowerCase() === "ya")      badgeClass = "bg-success";
-        if (status.toLowerCase() === "blokir")  badgeClass = "bg-danger";
-        if (status.toLowerCase() === "ongoing") badgeClass = "bg-warning text-dark";
-        if (status.toLowerCase() === "belum")   badgeClass = "bg-info text-dark";
-
-        return `<span class="badge ${badgeClass}">${status}</span>`;
+        status = status.toLowerCase();
+        const statusClasses = {
+          'ya': 'bg-success',
+          'blokir': 'bg-danger',
+          'ongoing': 'bg-warning text-dark',
+          'belum': 'bg-info text-dark'
+        };
+        const badgeClass = statusClasses[status] || 'bg-secondary';
+        
+        return `<span class="badge ${badgeClass} p-2">${status}</span>`;
       }
     });
   </script>

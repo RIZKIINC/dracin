@@ -110,7 +110,10 @@
             <option value="Ya">Ya</option>
             <option value="Belum">Belum</option>
             <option value="Ongoing">Ongoing</option>
-            <option value="Blokir">Blokir</option>
+            <!-- Mengubah Blokir menjadi Diblokir -->
+            <option value="Diblokir">Diblokir</option>
+            <!-- Penambahan status Ditinjau -->
+            <option value="Ditinjau">Ditinjau</option>
           </select>
         </div>
         <div class="col-md-3">
@@ -119,7 +122,8 @@
             <option value="Ya">Ya</option>
             <option value="Belum">Belum</option>
             <option value="Ongoing">Ongoing</option>
-            <option value="Blokir">Blokir</option>
+            <option value="Diblokir">Diblokir</option>
+            <option value="Ditinjau">Ditinjau</option>
           </select>
         </div>
         <div class="col-md-2">
@@ -128,7 +132,8 @@
             <option value="Ya">Ya</option>
             <option value="Belum">Belum</option>
             <option value="Ongoing">Ongoing</option>
-            <option value="Blokir">Blokir</option>
+            <option value="Diblokir">Diblokir</option>
+            <option value="Ditinjau">Ditinjau</option>
           </select>
         </div>
       </div>
@@ -235,7 +240,9 @@
           'Ya': { class: 'success', icon: 'fa-circle-check' },
           'Diblokir': { class: 'danger', icon: 'fa-ban' },
           'Ongoing': { class: 'warning', icon: 'fa-spinner' },
-          'Belum': { class: 'info', icon: 'fa-clock' }
+          'Belum': { class: 'info', icon: 'fa-clock' },
+          // Penambahan status baru "Ditinjau"
+          'Ditinjau': { class: 'primary', icon: 'fa-eye' }
         };
 
         const config = statusConfig[status] || { class: 'secondary', icon: 'fa-circle-question' };

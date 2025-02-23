@@ -53,6 +53,12 @@
       font-weight: 600;
       color: #f8f9fa;
     }
+    .episode-badge {
+      background: rgba(108, 117, 125, 0.2);
+      padding: 0.5em 0.8em;
+      border-radius: 8px;
+      font-size: 0.9em;
+    }
     .filter-container {
       background: #2d2d2d;
       border-radius: 8px;
@@ -113,8 +119,12 @@
         font-size: 0.75em;
         padding: 0.4em 0.8em;
       }
+      .episode-badge {
+        padding: 0.3em 0.6em;
+        font-size: 0.8em;
+      }
       .table-title {
-        max-width: 150px;
+        max-width: 120px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -194,6 +204,7 @@
             <th class="text-center">#</th>
             <th class="text-center">🎨 Gambar</th>
             <th class="text-center">📝 Judul</th>
+            <th class="text-center">📺 Episode</th>
             <th class="text-center"><i class="fab fa-tiktok me-1 me-md-2"></i><span class="d-none d-md-inline">TikTok</span></th>
             <th class="text-center"><i class="fab fa-youtube me-1 me-md-2"></i><span class="d-none d-md-inline">YouTube</span></th>
             <th class="text-center"><i class="fab fa-facebook me-1 me-md-2"></i><span class="d-none d-md-inline">Facebook</span></th>
@@ -299,6 +310,9 @@
                     </button>
                   ` : ''}
                 </div>
+              </td>
+              <td class="text-center">
+                <span class="episode-badge">${row['Jumlah Episode'] || '-'}</span>
               </td>
               <td class="text-center">${formatStatus(row.Tiktok)}</td>
               <td class="text-center">${formatStatus(row.Youtube)}</td>

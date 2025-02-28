@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>rizki_cinema</title>
+  <title>Rizki Cinema</title>
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23FF0000'/%3E%3Cpolygon points='26,20 26,44 46,32' fill='%23FFFFFF'/%3E%3C/svg%3E">
   <!-- Bootstrap CSS -->
@@ -14,158 +14,127 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
   <style>
+    :root {
+      --card-bg: #2d2d2d;
+      --card-border: #404040;
+    }
+
     body {
       background: #1a1a1a;
       color: #e9ecef;
     }
-    .table-custom {
-      --bs-table-bg: #2d2d2d;
-      --bs-table-border-color: #404040;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .table-custom th {
-      background: linear-gradient(45deg, #2b3035, #212529);
-      font-size: 1.1em;
-      padding: 1rem;
-    }
-    .table-hover tbody tr:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-      transition: background-color 0.2s;
-    }
-    .img-thumbnail {
-      transition: all 0.3s ease;
-      border: 2px solid #404040;
-    }
-    .img-thumbnail:hover {
-      transform: scale(1.05);
-      border-color: #6c757d;
-    }
-    .status-badge {
-      font-size: 0.9em;
-      padding: 0.6em 1em;
-      border-radius: 20px;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .table-title {
-      font-weight: 600;
-      color: #f8f9fa;
-    }
-    .episode-badge {
-      background: rgba(108, 117, 125, 0.2);
-      padding: 0.5em 0.8em;
-      border-radius: 8px;
-      font-size: 0.9em;
-    }
-    .filter-container {
-      background: #2d2d2d;
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .social-button {
-      margin-top: 0.5rem;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      font-size: 0.9em;
-      transition: all 0.3s ease;
-    }
-    .modal-content {
-      background: #2d2d2d;
-      border: 1px solid #404040;
-    }
-    .modal-header, .modal-footer {
-      border-color: #404040;
-    }
-    .synopsis-btn {
-      transition: opacity 0.2s;
-    }
-    .synopsis-btn:hover {
-      opacity: 0.8;
+
+    .card-custom {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      height: 100%;
     }
 
-    /* Mobile Optimizations */
+    .card-custom:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .img-container {
+      position: relative;
+      padding-top: 133.33%; /* 3:4 ratio */
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .card-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .count-badge {
+      background: #404040;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+
+    .copyable {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copyable:hover {
+      color: #6ea8fe !important;
+    }
+
     @media (max-width: 768px) {
-      .container {
-        padding: 1rem;
+      .card-custom {
+        margin-bottom: 1rem;
       }
-      h2 {
-        font-size: 1.5rem;
-        margin-bottom: 1rem !important;
-      }
-      .social-button {
-        width: 100%;
-        text-align: center;
-      }
+      
       .filter-container .col-md-4,
       .filter-container .col-md-3,
       .filter-container .col-md-2 {
         margin-bottom: 0.5rem;
       }
-      .table-custom th {
-        font-size: 0.9rem;
-        padding: 0.75rem;
-      }
-      .table-custom td {
-        font-size: 0.85rem;
-      }
-      .img-thumbnail {
-        width: 80px !important;
-        height: 100px !important;
-      }
-      .status-badge {
-        font-size: 0.75em;
-        padding: 0.4em 0.8em;
-      }
-      .episode-badge {
-        padding: 0.3em 0.6em;
-        font-size: 0.8em;
-      }
-      .table-title {
-        max-width: 120px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
+    }
+
+    .modal-platform-icon {
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
     }
   </style>
 </head>
 <body>
   <div class="container py-3 py-md-5">
-    <h2 class="text-center mb-3 mb-md-4 text-gradient">RIZIL CINEMA</h2>
-    
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <h2 class="mb-0">RIZKI CINEMA</h2>
+      <div class="d-flex gap-2">
+        <div class="count-badge">
+          Total Drama: <span id="dramaCount">0</span>
+        </div>
+        <div class="count-badge">
+          Total Video: <span id="videoCount">0</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Tombol Sosial Media -->
-    <div class="d-flex flex-md-row flex-column justify-content-center gap-2 gap-md-3 mb-3 mb-md-4 social-buttons-container">
+    <div class="d-flex flex-wrap justify-content-center gap-2 gap-md-3 mb-4">
       <a href="https://www.tiktok.com/@rizil_cinema" 
          target="_blank" 
-         class="btn btn-dark social-button">
+         class="btn btn-dark">
         <i class="fab fa-tiktok"></i> TikTok
       </a>
       <a href="https://www.youtube.com/@rizil_cinema" 
          target="_blank" 
-         class="btn btn-danger social-button">
+         class="btn btn-danger">
         <i class="fab fa-youtube"></i> YouTube
       </a>
       <a href="https://www.facebook.com/rizilcinema" 
          target="_blank" 
-         class="btn btn-primary social-button">
+         class="btn btn-primary">
         <i class="fab fa-facebook"></i> Facebook
       </a>
     </div>
 
     <!-- Filter Section -->
-    <div class="filter-container shadow-lg">
+    <div class="filter-container shadow-lg mb-4 p-3 rounded-3">
       <div class="row g-2">
         <div class="col-12 col-md-4">
-          <div class="input-group input-group-sm input-group-md">
+          <div class="input-group">
             <span class="input-group-text"><i class="fas fa-search"></i></span>
             <input type="text" id="searchInput" class="form-control" placeholder="Cari judul...">
           </div>
         </div>
         <div class="col-12 col-md-3">
-          <select id="filterTiktok" class="form-select form-select-sm form-select-md">
+          <select id="filterTiktok" class="form-select">
             <option value="">Semua TikTok</option>
             <option value="Ya">Ya</option>
             <option value="Belum">Belum</option>
@@ -175,7 +144,7 @@
           </select>
         </div>
         <div class="col-12 col-md-3">
-          <select id="filterYoutube" class="form-select form-select-sm form-select-md">
+          <select id="filterYoutube" class="form-select">
             <option value="">Semua YouTube</option>
             <option value="Ya">Ya</option>
             <option value="Belum">Belum</option>
@@ -185,7 +154,7 @@
           </select>
         </div>
         <div class="col-12 col-md-2">
-          <select id="filterFacebook" class="form-select form-select-sm form-select-md">
+          <select id="filterFacebook" class="form-select">
             <option value="">Semua FB</option>
             <option value="Ya">Ya</option>
             <option value="Belum">Belum</option>
@@ -197,37 +166,51 @@
       </div>
     </div>
 
-    <div class="table-responsive shadow-lg">
-      <table class="table table-custom table-hover align-middle">
-        <thead>
-          <tr>
-            <th class="text-center">#</th>
-            <th class="text-center">🎨 Gambar</th>
-            <th class="text-center">📝 Judul</th>
-            <th class="text-center">📺 Episode</th>
-            <th class="text-center"><i class="fab fa-tiktok me-1 me-md-2"></i><span class="d-none d-md-inline">TikTok</span></th>
-            <th class="text-center"><i class="fab fa-youtube me-1 me-md-2"></i><span class="d-none d-md-inline">YouTube</span></th>
-            <th class="text-center"><i class="fab fa-facebook me-1 me-md-2"></i><span class="d-none d-md-inline">Facebook</span></th>
-          </tr>
-        </thead>
-        <tbody id="data-body" class="table-group-divider">
-          <!-- Data akan dimuat melalui JavaScript -->
-        </tbody>
-      </table>
+    <!-- Card Grid -->
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4" id="card-grid">
+      <!-- Cards akan dimuat melalui JavaScript -->
     </div>
   </div>
 
-  <!-- Modal Sinopsis -->
-  <div class="modal fade" id="synopsisModal" tabindex="-1" aria-hidden="true">
+  <!-- Modal Info Lengkap -->
+  <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
-        <div class="modal-header border-secondary">
-          <h5 class="modal-title">📖 Sinopsis</h5>
+        <div class="modal-header">
+          <h5 class="modal-title copyable" id="modalTitle"></h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body" id="synopsisContent" style="white-space: pre-line; line-height: 1.6;"></div>
-        <div class="modal-footer border-secondary">
-          <button type="button" class="btn btn-sm btn-outline-light" data-bs-dismiss="modal">Tutup</button>
+        <div class="modal-body">
+          <div class="row g-4">
+            <div class="col-12 col-md-6">
+              <div class="img-container rounded-3">
+                <img id="modalImage" class="card-img rounded-3" alt="Movie poster">
+              </div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="d-flex flex-column gap-3">
+                <div>
+                  <h6>Episode:</h6>
+                  <span class="badge bg-secondary" id="modalEpisode"></span>
+                </div>
+                <div>
+                  <h6>Status:</h6>
+                  <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <span class="modal-platform-icon bg-dark"><i class="fab fa-tiktok"></i></span>
+                    <span class="badge" id="modalTiktok"></span>
+                    <span class="modal-platform-icon bg-danger"><i class="fab fa-youtube"></i></span>
+                    <span class="badge" id="modalYoutube"></span>
+                    <span class="modal-platform-icon bg-primary"><i class="fab fa-facebook"></i></span>
+                    <span class="badge" id="modalFacebook"></span>
+                  </div>
+                </div>
+                <div>
+                  <h6>Sinopsis <button class="btn btn-sm btn-outline-secondary copyable" onclick="copySynopsis()"><i class="fas fa-copy"></i></button></h6>
+                  <p class="text-muted" id="modalSynopsis" style="white-space: pre-line;"></p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -285,72 +268,115 @@
       }
 
       function renderTable(data) {
-        const dataBody = document.getElementById("data-body");
-        dataBody.innerHTML = "";
+        const cardGrid = document.getElementById("card-grid");
+        cardGrid.innerHTML = "";
+        
+        let totalVideos = 0;
+        const totalDramas = data.length;
 
         data.forEach((row, index) => {
-          const newRow = `
-            <tr>
-              <td class="text-center fw-semibold">${index + 1}</td>
-              <td class="text-center">
-                <img src="${row.Gambar}" 
-                     class="img-thumbnail rounded-3" 
-                     style="width: 120px; height: 160px; object-fit: cover;"
-                     alt="${row.Judul}"
-                     onerror="this.onerror=null;this.src='https://placehold.co/120x160/2d2d2d/FFF?text=Gambar+Tidak+Ada'">
-              </td>
-              <td class="table-title">
-                <div class="d-flex flex-column">
-                  <span class="text-truncate">${row.Judul}</span>
-                  ${row.Sinopsis ? `
-                    <button class="btn btn-link p-0 text-info text-decoration-none synopsis-btn" 
-                            type="button" 
-                            data-synopsis="${row.Sinopsis.replace(/"/g, '&quot;')}">
-                      <small><i class="fas fa-book-open me-1"></i>Baca Sinopsis</small>
-                    </button>
-                  ` : ''}
+          const episodes = parseInt(row['Jumlah Episode']) || 0;
+          totalVideos += episodes;
+
+          const card = `
+            <div class="col">
+              <div class="card card-custom">
+                <div class="img-container" 
+                     onclick="showModal('${row.Judul.replace(/'/g, "\\'")}', '${row.Gambar}', 
+                     '${row['Jumlah Episode']}', '${row.Tiktok}', '${row.Youtube}', 
+                     '${row.Facebook}', '${(row.Sinopsis || '').replace(/'/g, "\\'")}')">
+                  <img src="${row.Gambar}" 
+                       class="card-img" 
+                       alt="${row.Judul}"
+                       onerror="this.onerror=null;this.src='https://placehold.co/600x800/2d2d2d/FFF?text=No+Image'">
                 </div>
-              </td>
-              <td class="text-center">
-                <span class="episode-badge">${row['Jumlah Episode'] || '-'}</span>
-              </td>
-              <td class="text-center">${formatStatus(row.Tiktok)}</td>
-              <td class="text-center">${formatStatus(row.Youtube)}</td>
-              <td class="text-center">${formatStatus(row.Facebook)}</td>
-            </tr>
+                <div class="card-body">
+                  <h6 class="card-title text-truncate copyable" onclick="copyToClipboard('${row.Judul.replace(/'/g, "\\'")}')">${row.Judul}</h6>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-secondary">${row['Jumlah Episode'] || '-'}</span>
+                    <div class="d-flex gap-1">
+                      ${getStatusIcon(row.Tiktok, 'tiktok')}
+                      ${getStatusIcon(row.Youtube, 'youtube')}
+                      ${getStatusIcon(row.Facebook, 'facebook')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           `;
-          dataBody.innerHTML += newRow;
+          cardGrid.innerHTML += card;
         });
 
-        // Event listener untuk tombol sinopsis
-        document.querySelectorAll('.synopsis-btn').forEach(button => {
-          button.addEventListener('click', function() {
-            const synopsis = this.dataset.synopsis;
-            document.getElementById('synopsisContent').textContent = synopsis;
-            new bootstrap.Modal(document.getElementById('synopsisModal')).show();
-          });
-        });
+        document.getElementById("videoCount").textContent = totalVideos;
+        document.getElementById("dramaCount").textContent = totalDramas;
       }
 
-      function formatStatus(status) {
-        if (!status) return '-';
+      function getStatusIcon(status, platform) {
+        const icons = {
+          'Ya': 'fa-circle-check',
+          'Diblokir': 'fa-ban',
+          'Ongoing': 'fa-spinner',
+          'Belum': 'fa-clock',
+          'Ditinjau': 'fa-eye'
+        };
         
-        const statusConfig = {
-          'Ya': { class: 'success', icon: 'fa-circle-check' },
-          'Diblokir': { class: 'danger', icon: 'fa-ban' },
-          'Ongoing': { class: 'warning', icon: 'fa-spinner' },
-          'Belum': { class: 'info', icon: 'fa-clock' },
-          'Ditinjau': { class: 'primary', icon: 'fa-eye' }
+        const colors = {
+          tiktok: 'dark',
+          youtube: 'danger',
+          facebook: 'primary'
         };
 
-        const config = statusConfig[status] || { class: 'secondary', icon: 'fa-circle-question' };
+        return `<i class="fab fa-${platform} text-${colors[platform]} ${icons[status] ? 'fas ' + icons[status] : ''}"></i>`;
+      }
 
-        return `
-          <span class="status-badge bg-${config.class} text-white">
-            <i class="fas ${config.icon}"></i>
-            ${status}
-          </span>
-        `;
+      window.showModal = (title, image, episode, tiktok, youtube, facebook, synopsis) => {
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalImage').src = image;
+        document.getElementById('modalEpisode').textContent = episode || '-';
+        document.getElementById('modalSynopsis').textContent = synopsis || 'Tidak ada sinopsis';
+        
+        const updateStatus = (elementId, status) => {
+          const element = document.getElementById(elementId);
+          element.className = 'badge ' + getStatusClass(status);
+          element.innerHTML = `${status} <i class="fas ${getStatusIconClass(status)}"></i>`;
+        };
+
+        updateStatus('modalTiktok', tiktok);
+        updateStatus('modalYoutube', youtube);
+        updateStatus('modalFacebook', facebook);
+
+        new bootstrap.Modal(document.getElementById('infoModal')).show();
+      }
+
+      function getStatusClass(status) {
+        const classes = {
+          'Ya': 'bg-success',
+          'Diblokir': 'bg-danger',
+          'Ongoing': 'bg-warning',
+          'Belum': 'bg-info',
+          'Ditinjau': 'bg-primary'
+        };
+        return classes[status] || 'bg-secondary';
+      }
+
+      function getStatusIconClass(status) {
+        const icons = {
+          'Ya': 'fa-check',
+          'Diblokir': 'fa-ban',
+          'Ongoing': 'fa-sync',
+          'Belum': 'fa-clock',
+          'Ditinjau': 'fa-eye'
+        };
+        return icons[status] || 'fa-question';
+      }
+
+      window.copySynopsis = () => {
+        const synopsis = document.getElementById('modalSynopsis').textContent;
+        navigator.clipboard.writeText(synopsis);
+      }
+
+      window.copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text);
       }
 
       loadData();

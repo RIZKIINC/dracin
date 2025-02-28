@@ -4,13 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Rizki Cinema</title>
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23FF0000'/%3E%3Cpolygon points='26,20 26,44 46,32' fill='%23FFFFFF'/%3E%3C/svg%3E">
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- PapaParse -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
   <style>
@@ -38,7 +33,7 @@
 
     .img-container {
       position: relative;
-      padding-top: 133.33%; /* 3:4 ratio */
+      padding-top: 133.33%;
       overflow: hidden;
       cursor: pointer;
     }
@@ -50,8 +45,32 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.3s ease;
     }
+
+    .status-indicator {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 2;
+      display: flex;
+      gap: 4px;
+    }
+
+    .platform-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      background: rgba(0,0,0,0.7);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .platform-icon.blocked { background: #dc3545; }
+    .platform-icon.ongoing { background: #ffc107; }
+    .platform-icon.review { background: #0d6efd; }
 
     .count-badge {
       background: #404040;
@@ -60,34 +79,15 @@
       font-size: 0.9rem;
     }
 
-    .copyable {
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .copyable:hover {
-      color: #6ea8fe !important;
-    }
-
     @media (max-width: 768px) {
-      .card-custom {
-        margin-bottom: 1rem;
+      .img-container { padding-top: 100%; }
+      .card-title { font-size: 14px; }
+      .platform-icon {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
       }
-      
-      .filter-container .col-md-4,
-      .filter-container .col-md-3,
-      .filter-container .col-md-2 {
-        margin-bottom: 0.5rem;
-      }
-    }
-
-    .modal-platform-icon {
-      width: 30px;
-      height: 30px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
+      .row-cols-2 > * { flex: 0 0 50%; max-width: 50%; }
     }
   </style>
 </head>
@@ -105,26 +105,18 @@
       </div>
     </div>
 
-    <!-- Tombol Sosial Media -->
     <div class="d-flex flex-wrap justify-content-center gap-2 gap-md-3 mb-4">
-      <a href="https://www.tiktok.com/@rizil_cinema" 
-         target="_blank" 
-         class="btn btn-dark">
+      <a href="https://www.tiktok.com/@rizil_cinema" target="_blank" class="btn btn-dark">
         <i class="fab fa-tiktok"></i> TikTok
       </a>
-      <a href="https://www.youtube.com/@rizil_cinema" 
-         target="_blank" 
-         class="btn btn-danger">
+      <a href="https://www.youtube.com/@rizil_cinema" target="_blank" class="btn btn-danger">
         <i class="fab fa-youtube"></i> YouTube
       </a>
-      <a href="https://www.facebook.com/rizilcinema" 
-         target="_blank" 
-         class="btn btn-primary">
+      <a href="https://www.facebook.com/rizilcinema" target="_blank" class="btn btn-primary">
         <i class="fab fa-facebook"></i> Facebook
       </a>
     </div>
 
-    <!-- Filter Section -->
     <div class="filter-container shadow-lg mb-4 p-3 rounded-3">
       <div class="row g-2">
         <div class="col-12 col-md-4">
@@ -166,18 +158,15 @@
       </div>
     </div>
 
-    <!-- Card Grid -->
-    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4" id="card-grid">
-      <!-- Cards akan dimuat melalui JavaScript -->
-    </div>
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-2" id="card-grid"></div>
   </div>
 
-  <!-- Modal Info Lengkap -->
+  <!-- Modal -->
   <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title copyable" id="modalTitle"></h5>
+          <h5 class="modal-title" id="modalTitle"></h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -190,22 +179,22 @@
             <div class="col-12 col-md-6">
               <div class="d-flex flex-column gap-3">
                 <div>
-                  <h6>Episode:</h6>
-                  <span class="badge bg-secondary" id="modalEpisode"></span>
+                  <h6>Episode: <span class="badge bg-secondary" id="modalEpisode"></span></h6>
                 </div>
                 <div>
-                  <h6>Status:</h6>
+                  <h6>Status Platform:</h6>
                   <div class="d-flex flex-wrap gap-2 align-items-center">
-                    <span class="modal-platform-icon bg-dark"><i class="fab fa-tiktok"></i></span>
-                    <span class="badge" id="modalTiktok"></span>
-                    <span class="modal-platform-icon bg-danger"><i class="fab fa-youtube"></i></span>
-                    <span class="badge" id="modalYoutube"></span>
-                    <span class="modal-platform-icon bg-primary"><i class="fab fa-facebook"></i></span>
-                    <span class="badge" id="modalFacebook"></span>
+                    <span class="badge bg-dark"><i class="fab fa-tiktok me-2"></i><span id="modalTiktok"></span></span>
+                    <span class="badge bg-danger"><i class="fab fa-youtube me-2"></i><span id="modalYoutube"></span></span>
+                    <span class="badge bg-primary"><i class="fab fa-facebook me-2"></i><span id="modalFacebook"></span></span>
                   </div>
                 </div>
                 <div>
-                  <h6>Sinopsis <button class="btn btn-sm btn-outline-secondary copyable" onclick="copySynopsis()"><i class="fas fa-copy"></i></button></h6>
+                  <h6>Sinopsis 
+                    <button class="btn btn-sm btn-outline-secondary" onclick="copySynopsis()">
+                      <i class="fas fa-copy"></i>
+                    </button>
+                  </h6>
                   <p class="text-muted" id="modalSynopsis" style="white-space: pre-line;"></p>
                 </div>
               </div>
@@ -216,23 +205,28 @@
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- PapaParse Script -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRP-UjL7R-03VznIVFMrOtn_D_NOf0EgHYsfVlqcyTsiSj6TJ-xr9bQWI7UylvVaARyeNNl4AFB-O3L/pub?output=csv";
       let allData = [];
+      let currentData = [];
 
-      const searchInput = document.getElementById('searchInput');
-      const filterTiktok = document.getElementById('filterTiktok');
-      const filterYoutube = document.getElementById('filterYoutube');
-      const filterFacebook = document.getElementById('filterFacebook');
+      const elements = {
+        searchInput: document.getElementById('searchInput'),
+        filterTiktok: document.getElementById('filterTiktok'),
+        filterYoutube: document.getElementById('filterYoutube'),
+        filterFacebook: document.getElementById('filterFacebook'),
+        cardGrid: document.getElementById('card-grid'),
+        dramaCount: document.getElementById('dramaCount'),
+        videoCount: document.getElementById('videoCount')
+      };
 
-      searchInput.addEventListener('input', updateTable);
-      filterTiktok.addEventListener('change', updateTable);
-      filterYoutube.addEventListener('change', updateTable);
-      filterFacebook.addEventListener('change', updateTable);
+      // Event Listeners
+      elements.searchInput.addEventListener('input', updateTable);
+      elements.filterTiktok.addEventListener('change', updateTable);
+      elements.filterYoutube.addEventListener('change', updateTable);
+      elements.filterFacebook.addEventListener('change', updateTable);
 
       function loadData() {
         fetch(sheetUrl)
@@ -241,142 +235,120 @@
             Papa.parse(csvText, {
               header: true,
               skipEmptyLines: true,
-              complete: function (results) {
+              complete: (results) => {
                 allData = results.data;
+                currentData = [...allData];
                 updateTable();
+                initTooltips();
               }
             });
           });
       }
 
       function updateTable() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const tiktokFilter = filterTiktok.value;
-        const youtubeFilter = filterYoutube.value;
-        const facebookFilter = filterFacebook.value;
+        const filters = {
+          search: elements.searchInput.value.toLowerCase(),
+          tiktok: elements.filterTiktok.value,
+          youtube: elements.filterYoutube.value,
+          facebook: elements.filterFacebook.value
+        };
 
-        const filteredData = allData.filter(row => {
-          const matchesSearch = row.Judul.toLowerCase().includes(searchTerm);
-          const matchesTiktok = !tiktokFilter || row.Tiktok === tiktokFilter;
-          const matchesYoutube = !youtubeFilter || row.Youtube === youtubeFilter;
-          const matchesFacebook = !facebookFilter || row.Facebook === facebookFilter;
-          
-          return matchesSearch && matchesTiktok && matchesYoutube && matchesFacebook;
-        });
+        currentData = allData.filter(item => 
+          item.Judul.toLowerCase().includes(filters.search) &&
+          (!filters.tiktok || item.Tiktok === filters.tiktok) &&
+          (!filters.youtube || item.Youtube === filters.youtube) &&
+          (!filters.facebook || item.Facebook === filters.facebook)
+        );
 
-        renderTable(filteredData);
+        renderCards();
+        updateCounts();
       }
 
-      function renderTable(data) {
-        const cardGrid = document.getElementById("card-grid");
-        cardGrid.innerHTML = "";
-        
-        let totalVideos = 0;
-        const totalDramas = data.length;
-
-        data.forEach((row, index) => {
-          const episodes = parseInt(row['Jumlah Episode']) || 0;
-          totalVideos += episodes;
-
-          const card = `
-            <div class="col">
-              <div class="card card-custom">
-                <div class="img-container" 
-                     onclick="showModal('${row.Judul.replace(/'/g, "\\'")}', '${row.Gambar}', 
-                     '${row['Jumlah Episode']}', '${row.Tiktok}', '${row.Youtube}', 
-                     '${row.Facebook}', '${(row.Sinopsis || '').replace(/'/g, "\\'")}')">
-                  <img src="${row.Gambar}" 
-                       class="card-img" 
-                       alt="${row.Judul}"
-                       onerror="this.onerror=null;this.src='https://placehold.co/600x800/2d2d2d/FFF?text=No+Image'">
-                </div>
-                <div class="card-body">
-                  <h6 class="card-title text-truncate copyable" onclick="copyToClipboard('${row.Judul.replace(/'/g, "\\'")}')">${row.Judul}</h6>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span class="badge bg-secondary">${row['Jumlah Episode'] || '-'}</span>
-                    <div class="d-flex gap-1">
-                      ${getStatusIcon(row.Tiktok, 'tiktok')}
-                      ${getStatusIcon(row.Youtube, 'youtube')}
-                      ${getStatusIcon(row.Facebook, 'facebook')}
-                    </div>
+      function renderCards() {
+        elements.cardGrid.innerHTML = currentData.map(item => `
+          <div class="col">
+            <div class="card card-custom position-relative">
+              <div class="status-indicator">
+                ${getStatusBadge(item.Tiktok, 'TikTok')}
+                ${getStatusBadge(item.Youtube, 'YouTube')}
+                ${getStatusBadge(item.Facebook, 'Facebook')}
+              </div>
+              <div class="img-container" onclick="showModal(${JSON.stringify(item).replace(/"/g, "'")})">
+                <img src="${item.Gambar}" class="card-img"
+                  onerror="this.src='https://placehold.co/600x800/2d2d2d/FFF?text=No+Image'">
+              </div>
+              <div class="card-body p-2">
+                <h6 class="card-title text-truncate mb-1">${item.Judul}</h6>
+                <div class="d-flex justify-content-between align-items-center">
+                  <small class="text-muted">${item['Jumlah Episode'] || '-'} Ep</small>
+                  <div class="d-flex gap-1">
+                    ${getPlatformIcon('tiktok', item.Tiktok)}
+                    ${getPlatformIcon('youtube', item.Youtube)}
+                    ${getPlatformIcon('facebook', item.Facebook)}
                   </div>
                 </div>
               </div>
             </div>
-          `;
-          cardGrid.innerHTML += card;
-        });
-
-        document.getElementById("videoCount").textContent = totalVideos;
-        document.getElementById("dramaCount").textContent = totalDramas;
+          </div>
+        `).join('');
       }
 
-      function getStatusIcon(status, platform) {
-        const icons = {
-          'Ya': 'fa-circle-check',
-          'Diblokir': 'fa-ban',
-          'Ongoing': 'fa-spinner',
-          'Belum': 'fa-clock',
-          'Ditinjau': 'fa-eye'
+      function getStatusBadge(status, platform) {
+        const statusMap = {
+          'Diblokir': { icon: 'fa-ban', class: 'blocked' },
+          'Ongoing': { icon: 'fa-spinner', class: 'ongoing' },
+          'Ditinjau': { icon: 'fa-eye', class: 'review' }
         };
         
-        const colors = {
+        const config = statusMap[status] || null;
+        if (!config) return '';
+
+        return `
+          <span class="platform-icon ${config.class}" 
+                data-bs-toggle="tooltip" 
+                title="${platform}: ${status}">
+            <i class="fas ${config.icon}"></i>
+          </span>
+        `;
+      }
+
+      function getPlatformIcon(platform, status) {
+        const colorMap = {
           tiktok: 'dark',
           youtube: 'danger',
           facebook: 'primary'
         };
-
-        return `<i class="fab fa-${platform} text-${colors[platform]} ${icons[status] ? 'fas ' + icons[status] : ''}"></i>`;
+        return `<i class="fab fa-${platform} text-${colorMap[platform]} fs-6"></i>`;
       }
 
-      window.showModal = (title, image, episode, tiktok, youtube, facebook, synopsis) => {
-        document.getElementById('modalTitle').textContent = title;
-        document.getElementById('modalImage').src = image;
-        document.getElementById('modalEpisode').textContent = episode || '-';
-        document.getElementById('modalSynopsis').textContent = synopsis || 'Tidak ada sinopsis';
+      function updateCounts() {
+        elements.dramaCount.textContent = currentData.length;
+        elements.videoCount.textContent = currentData.reduce((acc, item) => 
+          acc + (parseInt(item['Jumlah Episode']) || 0), 0);
+      }
+
+      window.showModal = (item) => {
+        document.getElementById('modalTitle').textContent = item.Judul;
+        document.getElementById('modalImage').src = item.Gambar;
+        document.getElementById('modalEpisode').textContent = item['Jumlah Episode'] || '-';
+        document.getElementById('modalSynopsis').textContent = item.Sinopsis || 'Tidak ada sinopsis';
         
-        const updateStatus = (elementId, status) => {
-          const element = document.getElementById(elementId);
-          element.className = 'badge ' + getStatusClass(status);
-          element.innerHTML = `${status} <i class="fas ${getStatusIconClass(status)}"></i>`;
-        };
+        ['Tiktok', 'Youtube', 'Facebook'].forEach(platform => {
+          document.getElementById(`modal${platform}`).textContent = item[platform];
+        });
 
-        updateStatus('modalTiktok', tiktok);
-        updateStatus('modalYoutube', youtube);
-        updateStatus('modalFacebook', facebook);
-
-        new bootstrap.Modal(document.getElementById('infoModal')).show();
-      }
-
-      function getStatusClass(status) {
-        const classes = {
-          'Ya': 'bg-success',
-          'Diblokir': 'bg-danger',
-          'Ongoing': 'bg-warning',
-          'Belum': 'bg-info',
-          'Ditinjau': 'bg-primary'
-        };
-        return classes[status] || 'bg-secondary';
-      }
-
-      function getStatusIconClass(status) {
-        const icons = {
-          'Ya': 'fa-check',
-          'Diblokir': 'fa-ban',
-          'Ongoing': 'fa-sync',
-          'Belum': 'fa-clock',
-          'Ditinjau': 'fa-eye'
-        };
-        return icons[status] || 'fa-question';
-      }
+        new bootstrap.Modal('#infoModal').show();
+      };
 
       window.copySynopsis = () => {
-        const synopsis = document.getElementById('modalSynopsis').textContent;
-        navigator.clipboard.writeText(synopsis);
-      }
+        navigator.clipboard.writeText(
+          document.getElementById('modalSynopsis').textContent
+        );
+      };
 
-      window.copyToClipboard = (text) => {
-        navigator.clipboard.writeText(text);
+      function initTooltips() {
+        const tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltips.forEach(t => new bootstrap.Tooltip(t));
       }
 
       loadData();

@@ -79,13 +79,6 @@
       font-size: 0.9rem;
     }
 
-    .img-container {
-      position: relative;
-      padding-top: 133.33%; /* Pertahankan 3:4 untuk semua ukuran */
-      overflow: hidden;
-      cursor: pointer;
-    }
-
     @media (max-width: 768px) {
       .card-title { 
         font-size: 14px;
@@ -135,8 +128,9 @@
       <a href="https://www.youtube.com/@rizil_cinema" target="_blank" class="btn btn-danger">
         <i class="fab fa-youtube"></i> YouTube
       </a>
-      <a href="https://www.facebook.com/rizilcinema" target="_blank" class="btn btn-primary">
-        <i class="fab fa-facebook"></i> Facebook
+      <!-- Ganti Facebook dengan Telegram -->
+      <a href="https://t.me/rizil_cinema" target="_blank" class="btn btn-info">
+        <i class="fab fa-telegram"></i> Telegram
       </a>
     </div>
 
@@ -168,9 +162,10 @@
             <option value="Ditinjau">Ditinjau</option>
           </select>
         </div>
+        <!-- Bagian Facebook dihapus, diganti dengan Telegram -->
         <div class="col-12 col-md-2">
-          <select id="filterFacebook" class="form-select">
-            <option value="">Semua FB</option>
+          <select id="filterTelegram" class="form-select">
+            <option value="">Semua Telegram</option>
             <option value="Ya">Ya</option>
             <option value="Belum">Belum</option>
             <option value="Ongoing">Ongoing</option>
@@ -207,9 +202,19 @@
                 <div>
                   <h6>Status Platform:</h6>
                   <div class="d-flex flex-wrap gap-2 align-items-center">
-                    <span class="badge bg-dark"><i class="fab fa-tiktok me-2"></i><span id="modalTiktok"></span></span>
-                    <span class="badge bg-danger"><i class="fab fa-youtube me-2"></i><span id="modalYoutube"></span></span>
-                    <span class="badge bg-primary"><i class="fab fa-facebook me-2"></i><span id="modalFacebook"></span></span>
+                    <span class="badge bg-dark">
+                      <i class="fab fa-tiktok me-2"></i>
+                      <span id="modalTiktok"></span>
+                    </span>
+                    <span class="badge bg-danger">
+                      <i class="fab fa-youtube me-2"></i>
+                      <span id="modalYoutube"></span>
+                    </span>
+                    <!-- Ganti Facebook dengan Telegram -->
+                    <span class="badge bg-info">
+                      <i class="fab fa-telegram me-2"></i>
+                      <span id="modalTelegram"></span>
+                    </span>
                   </div>
                 </div>
                 <div>
@@ -224,7 +229,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div><!-- /.modal-content -->
     </div>
   </div>
 
@@ -239,7 +244,7 @@
         searchInput: document.getElementById('searchInput'),
         filterTiktok: document.getElementById('filterTiktok'),
         filterYoutube: document.getElementById('filterYoutube'),
-        filterFacebook: document.getElementById('filterFacebook'),
+        filterTelegram: document.getElementById('filterTelegram'),
         cardGrid: document.getElementById('card-grid'),
         dramaCount: document.getElementById('dramaCount'),
         videoCount: document.getElementById('videoCount')
@@ -249,7 +254,7 @@
       elements.searchInput.addEventListener('input', updateTable);
       elements.filterTiktok.addEventListener('change', updateTable);
       elements.filterYoutube.addEventListener('change', updateTable);
-      elements.filterFacebook.addEventListener('change', updateTable);
+      elements.filterTelegram.addEventListener('change', updateTable);
 
       function loadData() {
         fetch(sheetUrl)
@@ -273,14 +278,14 @@
           search: elements.searchInput.value.toLowerCase(),
           tiktok: elements.filterTiktok.value,
           youtube: elements.filterYoutube.value,
-          facebook: elements.filterFacebook.value
+          telegram: elements.filterTelegram.value
         };
 
         currentData = allData.filter(item => 
           item.Judul.toLowerCase().includes(filters.search) &&
           (!filters.tiktok || item.Tiktok === filters.tiktok) &&
           (!filters.youtube || item.Youtube === filters.youtube) &&
-          (!filters.facebook || item.Facebook === filters.facebook)
+          (!filters.telegram || item.Telegram === filters.telegram)
         );
 
         renderCards();
@@ -294,7 +299,7 @@
               <div class="status-indicator">
                 ${getStatusBadge(item.Tiktok, 'TikTok')}
                 ${getStatusBadge(item.Youtube, 'YouTube')}
-                ${getStatusBadge(item.Facebook, 'Facebook')}
+                ${getStatusBadge(item.Telegram, 'Telegram')}
               </div>
               <div class="img-container" onclick="showModal(${JSON.stringify(item).replace(/"/g, "'")})">
                 <img src="${item.Gambar}" class="card-img"
@@ -307,7 +312,7 @@
                   <div class="d-flex gap-1">
                     ${getPlatformIcon('tiktok', item.Tiktok)}
                     ${getPlatformIcon('youtube', item.Youtube)}
-                    ${getPlatformIcon('facebook', item.Facebook)}
+                    ${getPlatformIcon('telegram', item.Telegram)}
                   </div>
                 </div>
               </div>
@@ -339,7 +344,7 @@
         const colorMap = {
           tiktok: 'dark',
           youtube: 'danger',
-          facebook: 'primary'
+          telegram: 'info'
         };
         return `<i class="fab fa-${platform} text-${colorMap[platform]} fs-6"></i>`;
       }
@@ -356,7 +361,8 @@
         document.getElementById('modalEpisode').textContent = item['Jumlah Episode'] || '-';
         document.getElementById('modalSynopsis').textContent = item.Sinopsis || 'Tidak ada sinopsis';
         
-        ['Tiktok', 'Youtube', 'Facebook'].forEach(platform => {
+        // Ganti Facebook dengan Telegram
+        ['Tiktok', 'Youtube', 'Telegram'].forEach(platform => {
           document.getElementById(`modal${platform}`).textContent = item[platform];
         });
 

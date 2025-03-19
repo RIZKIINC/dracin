@@ -7,37 +7,31 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-
   <style>
     :root {
       --card-bg: #2d2d2d;
       --card-border: #404040;
     }
-
     body {
       background: #1a1a1a;
       color: #e9ecef;
     }
-
     .card-custom {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       height: 100%;
     }
-
     .card-custom:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
-
     .img-container {
       position: relative;
       padding-top: 133.33%;
       overflow: hidden;
       cursor: pointer;
     }
-
     .card-img {
       position: absolute;
       top: 0;
@@ -46,7 +40,6 @@
       height: 100%;
       object-fit: cover;
     }
-
     .status-indicator {
       position: absolute;
       top: 8px;
@@ -55,7 +48,6 @@
       display: flex;
       gap: 4px;
     }
-
     .platform-icon {
       width: 24px;
       height: 24px;
@@ -67,38 +59,32 @@
       background: rgba(0,0,0,0.7);
       border: 1px solid rgba(255,255,255,0.1);
     }
-
     .platform-icon.blocked { background: #dc3545; }
     .platform-icon.ongoing { background: #ffc107; }
     .platform-icon.review { background: #0d6efd; }
-
+    .platform-icon.uploading { background: #20c997; }
     .count-badge {
       background: #404040;
       padding: 0.5rem 1rem;
       border-radius: 20px;
       font-size: 0.9rem;
     }
-
     @media (max-width: 768px) {
       .card-title { 
         font-size: 14px;
         line-height: 1.3;
       }
-      
       .platform-icon {
         width: 20px;
         height: 20px;
         font-size: 10px;
       }
-      
       .card-body {
         padding: 0.5rem !important;
       }
-      
       .badge, .text-muted {
         font-size: 0.75em !important;
       }
-      
       .row-cols-2 > * {
         flex: 0 0 50%;
         max-width: 50%;
@@ -120,7 +106,6 @@
         </div>
       </div>
     </div>
-
     <div class="d-flex flex-wrap justify-content-center gap-2 gap-md-3 mb-4">
       <a href="https://www.tiktok.com/@rizil_cinema" target="_blank" class="btn btn-dark">
         <i class="fab fa-tiktok"></i> TikTok
@@ -128,54 +113,56 @@
       <a href="https://www.youtube.com/@rizil_cinema" target="_blank" class="btn btn-danger">
         <i class="fab fa-youtube"></i> YouTube
       </a>
-      <!-- Ganti Facebook dengan Telegram -->
       <a href="https://t.me/rizil_cinema" target="_blank" class="btn btn-info">
         <i class="fab fa-telegram"></i> Telegram
       </a>
     </div>
-
+    <!-- Modified Filter Section -->
     <div class="filter-container shadow-lg mb-4 p-3 rounded-3">
       <div class="row g-2">
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-3">
           <div class="input-group">
             <span class="input-group-text"><i class="fas fa-search"></i></span>
             <input type="text" id="searchInput" class="form-control" placeholder="Cari judul...">
           </div>
         </div>
-        <div class="col-12 col-md-3">
+        <!-- TikTok Filter -->
+        <div class="col-12 col-md-2">
           <select id="filterTiktok" class="form-select">
             <option value="">Semua TikTok</option>
-            <option value="Ya">Ya</option>
             <option value="Belum">Belum</option>
             <option value="Ongoing">Ongoing</option>
-            <option value="Diblokir">Diblokir</option>
-            <option value="Ditinjau">Ditinjau</option>
+            <option value="Ya">Ya</option>
           </select>
         </div>
-        <div class="col-12 col-md-3">
+        <!-- YouTube Filter -->
+        <div class="col-12 col-md-2">
           <select id="filterYoutube" class="form-select">
             <option value="">Semua YouTube</option>
-            <option value="Ya">Ya</option>
-            <option value="Belum">Belum</option>
-            <option value="Ongoing">Ongoing</option>
-            <option value="Diblokir">Diblokir</option>
             <option value="Ditinjau">Ditinjau</option>
+            <option value="Diblokir">Diblokir</option>
+            <option value="Ya">Ya</option>
           </select>
         </div>
-        <!-- Bagian Facebook dihapus, diganti dengan Telegram -->
+        <!-- Telegram Filter -->
         <div class="col-12 col-md-2">
           <select id="filterTelegram" class="form-select">
             <option value="">Semua Telegram</option>
-            <option value="Ya">Ya</option>
             <option value="Belum">Belum</option>
-            <option value="Ongoing">Ongoing</option>
-            <option value="Diblokir">Diblokir</option>
-            <option value="Ditinjau">Ditinjau</option>
+            <option value="Ya">Ya</option>
+          </select>
+        </div>
+        <!-- Telegram VIP Filter -->
+        <div class="col-12 col-md-2">
+          <select id="filterTelegramVIP" class="form-select">
+            <option value="">Semua Telegram VIP</option>
+            <option value="Belum">Belum</option>
+            <option value="Uploading">Uploading</option>
+            <option value="Ya">Ya</option>
           </select>
         </div>
       </div>
     </div>
-
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-2" id="card-grid"></div>
   </div>
 
@@ -210,10 +197,13 @@
                       <i class="fab fa-youtube me-2"></i>
                       <span id="modalYoutube"></span>
                     </span>
-                    <!-- Ganti Facebook dengan Telegram -->
                     <span class="badge bg-info">
                       <i class="fab fa-telegram me-2"></i>
                       <span id="modalTelegram"></span>
+                    </span>
+                    <span class="badge bg-success">
+                      <i class="fab fa-telegram me-2"></i>
+                      <span id="modalTelegramVIP"></span>
                     </span>
                   </div>
                 </div>
@@ -245,6 +235,7 @@
         filterTiktok: document.getElementById('filterTiktok'),
         filterYoutube: document.getElementById('filterYoutube'),
         filterTelegram: document.getElementById('filterTelegram'),
+        filterTelegramVIP: document.getElementById('filterTelegramVIP'),
         cardGrid: document.getElementById('card-grid'),
         dramaCount: document.getElementById('dramaCount'),
         videoCount: document.getElementById('videoCount')
@@ -255,6 +246,7 @@
       elements.filterTiktok.addEventListener('change', updateTable);
       elements.filterYoutube.addEventListener('change', updateTable);
       elements.filterTelegram.addEventListener('change', updateTable);
+      elements.filterTelegramVIP.addEventListener('change', updateTable);
 
       function loadData() {
         fetch(sheetUrl)
@@ -278,14 +270,16 @@
           search: elements.searchInput.value.toLowerCase(),
           tiktok: elements.filterTiktok.value,
           youtube: elements.filterYoutube.value,
-          telegram: elements.filterTelegram.value
+          telegram: elements.filterTelegram.value,
+          telegramVIP: elements.filterTelegramVIP.value
         };
 
         currentData = allData.filter(item => 
           item.Judul.toLowerCase().includes(filters.search) &&
           (!filters.tiktok || item.Tiktok === filters.tiktok) &&
           (!filters.youtube || item.Youtube === filters.youtube) &&
-          (!filters.telegram || item.Telegram === filters.telegram)
+          (!filters.telegram || item.Telegram === filters.telegram) &&
+          (!filters.telegramVIP || item['Telegram VIP'] === filters.telegramVIP)
         );
 
         renderCards();
@@ -300,6 +294,7 @@
                 ${getStatusBadge(item.Tiktok, 'TikTok')}
                 ${getStatusBadge(item.Youtube, 'YouTube')}
                 ${getStatusBadge(item.Telegram, 'Telegram')}
+                ${getStatusBadge(item['Telegram VIP'], 'Telegram VIP')}
               </div>
               <div class="img-container" onclick="showModal(${JSON.stringify(item).replace(/"/g, "'")})">
                 <img src="${item.Gambar}" class="card-img"
@@ -313,6 +308,7 @@
                     ${getPlatformIcon('tiktok', item.Tiktok)}
                     ${getPlatformIcon('youtube', item.Youtube)}
                     ${getPlatformIcon('telegram', item.Telegram)}
+                    ${getPlatformIcon('telegram', item['Telegram VIP'], 'VIP')}
                   </div>
                 </div>
               </div>
@@ -325,9 +321,10 @@
         const statusMap = {
           'Diblokir': { icon: 'fa-ban', class: 'blocked' },
           'Ongoing': { icon: 'fa-spinner', class: 'ongoing' },
-          'Ditinjau': { icon: 'fa-eye', class: 'review' }
+          'Ditinjau': { icon: 'fa-eye', class: 'review' },
+          'Uploading': { icon: 'fa-cloud-upload-alt', class: 'uploading' },
         };
-        
+
         const config = statusMap[status] || null;
         if (!config) return '';
 
@@ -340,11 +337,11 @@
         `;
       }
 
-      function getPlatformIcon(platform, status) {
+      function getPlatformIcon(platform, status, type = '') {
         const colorMap = {
           tiktok: 'dark',
           youtube: 'danger',
-          telegram: 'info'
+          telegram: type === 'VIP' ? 'success' : 'info'
         };
         return `<i class="fab fa-${platform} text-${colorMap[platform]} fs-6"></i>`;
       }
@@ -361,10 +358,10 @@
         document.getElementById('modalEpisode').textContent = item['Jumlah Episode'] || '-';
         document.getElementById('modalSynopsis').textContent = item.Sinopsis || 'Tidak ada sinopsis';
         
-        // Ganti Facebook dengan Telegram
         ['Tiktok', 'Youtube', 'Telegram'].forEach(platform => {
           document.getElementById(`modal${platform}`).textContent = item[platform];
         });
+        document.getElementById('modalTelegramVIP').textContent = item['Telegram VIP'];
 
         new bootstrap.Modal('#infoModal').show();
       };

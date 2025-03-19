@@ -59,10 +59,13 @@
       background: rgba(0,0,0,0.7);
       border: 1px solid rgba(255,255,255,0.1);
     }
-    .platform-icon.blocked { background: #dc3545; }
-    .platform-icon.ongoing { background: #ffc107; }
-    .platform-icon.review { background: #0d6efd; }
-    .platform-icon.uploading { background: #20c997; }
+    .platform-icon.blocked { background: #dc3545; }   /* Merah - Status diblokir */
+    .platform-icon.ongoing { background: #ffc107; }   /* Kuning - Sedang berlangsung */
+    .platform-icon.review { background: #0d6efd; }    /* Biru - Dalam peninjauan */
+    .platform-icon.uploading { background: #20c997; } /* Hijau Tosca - Sedang mengunggah */
+    .platform-icon.belum { background: #6c757d; }     /* Abu-abu - Belum diproses */
+    .platform-icon.ya { background: #198754; }        /* Hijau - Sudah diproses */
+
     .count-badge {
       background: #404040;
       padding: 0.5rem 1rem;
@@ -323,6 +326,8 @@
           'Ongoing': { icon: 'fa-spinner', class: 'ongoing' },
           'Ditinjau': { icon: 'fa-eye', class: 'review' },
           'Uploading': { icon: 'fa-cloud-upload-alt', class: 'uploading' },
+          'Belum': { icon: 'fa-solid fa-circle-xmark', class: 'belum' },
+          'Ya': { icon: 'fa-solid fa-circle-check', class: 'ya' },
         };
 
         const config = statusMap[status] || null;

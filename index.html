@@ -59,12 +59,12 @@
       background: rgba(0,0,0,0.7);
       border: 1px solid rgba(255,255,255,0.1);
     }
-    .platform-icon.blocked { background: #dc3545; }   /* Merah - Status diblokir */
-    .platform-icon.ongoing { background: #ffc107; }   /* Kuning - Sedang berlangsung */
-    .platform-icon.review { background: #0d6efd; }    /* Biru - Dalam peninjauan */
-    .platform-icon.uploading { background: #20c997; } /* Hijau Tosca - Sedang mengunggah */
-    .platform-icon.belum { background: #6c757d; }     /* Abu-abu - Belum diproses */
-    .platform-icon.ya { background: #198754; }        /* Hijau - Sudah diproses */
+    .platform-icon.blocked { background: #dc3545; }
+    .platform-icon.ongoing { background: #ffc107; }
+    .platform-icon.review { background: #0d6efd; }
+    .platform-icon.uploading { background: #20c997; }
+    .platform-icon.belum { background: #6c757d; }
+    .platform-icon.ya { background: #198754; }
 
     .count-badge {
       background: #404040;
@@ -120,7 +120,7 @@
         <i class="fab fa-telegram"></i> Telegram
       </a>
     </div>
-    <!-- Modified Filter Section -->
+
     <div class="filter-container shadow-lg mb-4 p-3 rounded-3">
       <div class="row g-2">
         <div class="col-12 col-md-3">
@@ -129,7 +129,6 @@
             <input type="text" id="searchInput" class="form-control" placeholder="Cari judul...">
           </div>
         </div>
-        <!-- TikTok Filter -->
         <div class="col-12 col-md-2">
           <select id="filterTiktok" class="form-select">
             <option value="">Semua TikTok</option>
@@ -138,7 +137,6 @@
             <option value="Ya">Ya</option>
           </select>
         </div>
-        <!-- YouTube Filter -->
         <div class="col-12 col-md-2">
           <select id="filterYoutube" class="form-select">
             <option value="">Semua YouTube</option>
@@ -147,7 +145,6 @@
             <option value="Ya">Ya</option>
           </select>
         </div>
-        <!-- Telegram Filter -->
         <div class="col-12 col-md-2">
           <select id="filterTelegram" class="form-select">
             <option value="">Semua Telegram</option>
@@ -155,7 +152,6 @@
             <option value="Ya">Ya</option>
           </select>
         </div>
-        <!-- Telegram VIP Filter -->
         <div class="col-12 col-md-2">
           <select id="filterTelegramVIP" class="form-select">
             <option value="">Semua Telegram VIP</option>
@@ -174,7 +170,12 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="modalTitle"></h5>
+          <h5 class="modal-title d-flex align-items-center gap-2">
+            <span id="modalTitle"></span>
+            <button class="btn btn-sm btn-outline-secondary" onclick="copyTitle()" title="Salin Judul">
+              <i class="fas fa-copy"></i>
+            </button>
+          </h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -222,7 +223,19 @@
             </div>
           </div>
         </div>
-      </div><!-- /.modal-content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+    <div id="copyToast" class="toast align-items-center text-bg-success border-0" role="alert" data-bs-delay="2000">
+      <div class="d-flex">
+        <div class="toast-body">
+          ✅ Berhasil disalin!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
     </div>
   </div>
 
@@ -244,7 +257,6 @@
         videoCount: document.getElementById('videoCount')
       };
 
-      // Event Listeners
       elements.searchInput.addEventListener('input', updateTable);
       elements.filterTiktok.addEventListener('change', updateTable);
       elements.filterYoutube.addEventListener('change', updateTable);
@@ -332,7 +344,6 @@
 
         const config = statusMap[status] || null;
         if (!config) return '';
-
         return `
           <span class="platform-icon ${config.class}" 
                 data-bs-toggle="tooltip" 
@@ -357,6 +368,24 @@
           acc + (parseInt(item['Jumlah Episode']) || 0), 0);
       }
 
+      function showToast() {
+        const toastEl = document.getElementById('copyToast');
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+      }
+
+      window.copyTitle = () => {
+        navigator.clipboard.writeText(
+          document.getElementById('modalTitle').textContent
+        ).then(showToast);
+      };
+
+      window.copySynopsis = () => {
+        navigator.clipboard.writeText(
+          document.getElementById('modalSynopsis').textContent
+        ).then(showToast);
+      };
+
       window.showModal = (item) => {
         document.getElementById('modalTitle').textContent = item.Judul;
         document.getElementById('modalImage').src = item.Gambar;
@@ -369,12 +398,6 @@
         document.getElementById('modalTelegramVIP').textContent = item['Telegram VIP'];
 
         new bootstrap.Modal('#infoModal').show();
-      };
-
-      window.copySynopsis = () => {
-        navigator.clipboard.writeText(
-          document.getElementById('modalSynopsis').textContent
-        );
       };
 
       function initTooltips() {
